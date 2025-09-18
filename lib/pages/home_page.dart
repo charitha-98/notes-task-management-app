@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_sphere/utills/constents.dart';
+import 'package:note_sphere/utills/router.dart';
 import 'package:note_sphere/utills/text_styles.dart';
 import 'package:note_sphere/widgets/notes_todo_cards.dart';
 import 'package:note_sphere/widgets/progress_card.dart';
@@ -21,15 +22,25 @@ class HomePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                NotesTodoCards(
-                  title: "Notes",
-                  description: "Sinhala notes",
-                  icon: Icons.account_balance,
+                GestureDetector(
+                  onTap: () {
+                    AppRouter.router.push("/notes");
+                  },
+                  child: NotesTodoCards(
+                    title: "Notes",
+                    description: "Sinhala notes",
+                    icon: Icons.account_balance,
+                  ),
                 ),
-                NotesTodoCards(
-                  title: "Notes",
-                  description: "Sinhala notes",
-                  icon: Icons.account_balance,
+                GestureDetector(
+                  onTap: () {
+                    AppRouter.router.push("/todo");
+                  },
+                  child: NotesTodoCards(
+                    title: "Todo",
+                    description: "Sinhala notes",
+                    icon: Icons.account_balance,
+                  ),
                 ),
               ],
             ),
