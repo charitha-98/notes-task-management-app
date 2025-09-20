@@ -75,4 +75,50 @@ class NoteServices {
     }
     return notes;
   }
+
+  Future<void> updateNote(Note note) async {
+    try {
+      final dynamic allNotes = await _myBox.get("notes");
+      final int index = allNotes.indexWhere((element) => element.id == note.id);
+
+      allNotes[index] = note;
+      await _myBox.put("notes", allNotes);
+    } catch (error) {
+      print(error.toString());
+    }
+  }
+
+  Future<void> deleteNote(String noteId) async {
+    try {
+      final dynamic allNotes = await _myBox.get("notes");
+      allNotes.removeWhere((element) => element.id == noteId);
+
+      await _myBox.put("notes", allNotes);
+    } catch (error) {
+      print(error.toString());
+    }
+  }
+
+  Future<List<String>> getAllCategories() async {
+    final List<String> categories = [];
+
+    final dynamic allNotes = await _myBox.get("notes");
+
+    for (final note in allNotes) {
+      if (!categories.contains(note.category)) {
+        categories.add(note.category);
+      }
+    }
+    return categories;
+  }
+
+  Future<void> addNote(Note note) async {
+    try {
+      final dynamic allNotes = await _myBox.get("notes");
+      allNotes.add(note);
+      _myBox.put("notes", allNotes);
+    } catch (error) {
+      print(error.toString());
+    }
+  }
 }
