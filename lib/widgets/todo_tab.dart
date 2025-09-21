@@ -5,6 +5,7 @@ import 'package:note_sphere/services/todo_service.dart';
 import 'package:note_sphere/utills/router.dart';
 
 import 'package:note_sphere/widgets/todo_card.dart';
+import 'package:note_sphere/widgets/todo_inherited_widget.dart';
 
 class TodoTab extends StatefulWidget {
   final List<ToDo> inCompletedTodos;
@@ -50,36 +51,40 @@ class _TodoTabState extends State<TodoTab> {
       widget.inCompletedTodos.sort((a, b) => a.time.compareTo(b.time));
     });
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        children: [
-          SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.inCompletedTodos.length,
-              itemBuilder: (context, index) {
-                final ToDo todo = widget.inCompletedTodos[index];
-                return Dismissible(
-                  key: Key(todo.id.toString()),
-                  onDismissed: (direction) {
-                    setState(() {
-                      widget.inCompletedTodos.removeAt(index);
-                      TodoService().deletdTodo(todo);
-                    });
+    return TodoData(
+      todos: widget.inCompletedTodos,
+      onTodoChanged: (todo) {},
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.inCompletedTodos.length,
+                itemBuilder: (context, index) {
+                  final ToDo todo = widget.inCompletedTodos[index];
+                  return Dismissible(
+                    key: Key(todo.id.toString()),
+                    onDismissed: (direction) {
+                      setState(() {
+                        widget.inCompletedTodos.removeAt(index);
+                        TodoService().deletdTodo(todo);
+                      });
 
-                    AppHelpers.showSnackBar(context, "Todo is scuccesfully!");
-                  },
-                  child: TodoCard(
-                    todo: todo,
-                    isCompleted: false,
-                    onCheckBoxChanged: () => _markTodoAsDone(todo),
-                  ),
-                );
-              },
+                      AppHelpers.showSnackBar(context, "Todo is scuccesfully!");
+                    },
+                    child: TodoCard(
+                      todo: todo,
+                      isCompleted: false,
+                      onCheckBoxChanged: () => _markTodoAsDone(todo),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

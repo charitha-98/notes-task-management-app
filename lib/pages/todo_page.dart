@@ -5,8 +5,10 @@ import 'package:note_sphere/helpers/snackbar.dart';
 import 'package:note_sphere/models/todo_model.dart';
 import 'package:note_sphere/services/todo_service.dart';
 import 'package:note_sphere/utills/colors.dart';
+import 'package:note_sphere/utills/router.dart';
 import 'package:note_sphere/utills/text_styles.dart';
 import 'package:note_sphere/widgets/completed_tab.dart';
+import 'package:note_sphere/widgets/todo_inherited_widget.dart';
 import 'package:note_sphere/widgets/todo_tab.dart';
 
 class TodoPage extends StatefulWidget {
@@ -69,6 +71,11 @@ class _TodoPageState extends State<TodoPage>
         );
 
         await todoService.addTodo(newTodo);
+        _loadTodos();
+
+        if (TodoData.of(context) != null) {
+          TodoData.of(context)!.onTodoChanged(allTodos);
+        }
 
         setState(() {
           allTodos.add(newTodo);
@@ -139,40 +146,53 @@ class _TodoPageState extends State<TodoPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        bottom: TabBar(
-          dividerColor: Colors.transparent,
+    return TodoData(
+      todos: allTodos,
+      onTodoChanged: (todo) {},
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              AppRouter.router.push("/");
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
+          bottom: TabBar(
+            dividerColor: Colors.transparent,
+            controller: _tabController,
+            tabs: [
+              Tab(child: Text("ToDo", style: AppTextStyles.appDescription)),
+              Tab(
+                child: Text("Completed", style: AppTextStyles.appDescription),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            openMassageModel(context);
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(100)),
+            side: BorderSide(color: AppColors.kWhiteColor, width: 2),
+          ),
+          child: Icon(Icons.add, color: AppColors.kWhiteColor, size: 30),
+        ),
+        body: TabBarView(
           controller: _tabController,
-          tabs: [
-            Tab(child: Text("ToDo", style: AppTextStyles.appDescription)),
-            Tab(child: Text("Completed", style: AppTextStyles.appDescription)),
+
+          children: [
+            TodoTab(
+              inCompletedTodos: incompletedTodos,
+              completedTodos: completedTodos,
+            ),
+            CompletedTab(
+              completedTodos: completedTodos,
+              inCompletedTodos: incompletedTodos,
+            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          openMassageModel(context);
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(100)),
-          side: BorderSide(color: AppColors.kWhiteColor, width: 2),
-        ),
-        child: Icon(Icons.add, color: AppColors.kWhiteColor, size: 30),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-
-        children: [
-          TodoTab(
-            inCompletedTodos: incompletedTodos,
-            completedTodos: completedTodos,
-          ),
-          CompletedTab(
-            completedTodos: completedTodos,
-            inCompletedTodos: incompletedTodos,
-          ),
-        ],
       ),
     );
   }
