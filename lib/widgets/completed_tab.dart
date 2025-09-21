@@ -46,7 +46,6 @@ class _CompletedTabState extends State<CompletedTab> {
 
   @override
   Widget build(BuildContext context) {
-    print("Completed todos length: ${widget.completedTodos.length}");
     setState(() {
       widget.completedTodos.sort((a, b) => a.time.compareTo(b.time));
     });

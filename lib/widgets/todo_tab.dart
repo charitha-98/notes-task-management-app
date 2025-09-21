@@ -23,6 +23,7 @@ class _TodoTabState extends State<TodoTab> {
   void _markTodoAsDone(ToDo todo) async {
     try {
       final ToDo updatedToDo = ToDo(
+        id: todo.id,
         title: todo.title,
         date: todo.date,
         time: todo.time,
